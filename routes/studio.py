@@ -1,6 +1,4 @@
 import json
-import os
-import uuid
 
 from flask import (
     Blueprint,
@@ -17,10 +15,7 @@ from flask_login import (
     current_user
 )
 
-from werkzeug.utils import secure_filename
-
 from extensions import db
-
 from models import Artwork
 
 from services.pixel_converter import (
@@ -43,6 +38,13 @@ ALLOWED_EXTENSIONS = {
 }
 
 
+# New image conversions are intentionally
+# limited to these two resolutions.
+ALLOWED_PIXEL_SIZES = {
+    16,
+    32
+}
+
 
 def allowed_file(filename):
 
@@ -56,7 +58,6 @@ def allowed_file(filename):
     )
 
 
-
 @studio_bp.route("/")
 @login_required
 def studio():
@@ -64,7 +65,6 @@ def studio():
     return render_template(
         "studio.html"
     )
-
 
 
 @studio_bp.route(
@@ -115,6 +115,7 @@ def convert():
         )
 
 
+    # Read the requested resolution.
     try:
 
         size = int(
@@ -124,11 +125,28 @@ def convert():
             )
         )
 
-    except ValueError:
+    except (
+        TypeError,
+        ValueError
+    ):
 
         size = 32
 
 
+    # Only 16x16 and 32x32 are allowed.
+    if size not in ALLOWED_PIXEL_SIZES:
+
+        flash(
+            "Pixel resolution must be 16 × 16 or 32 × 32.",
+            "error"
+        )
+
+        return redirect(
+            url_for("studio.convert")
+        )
+
+
+    # Read the requested color count.
     try:
 
         colors = int(
@@ -138,20 +156,15 @@ def convert():
             )
         )
 
-    except ValueError:
+    except (
+        TypeError,
+        ValueError
+    ):
 
         colors = 16
 
 
-    size = max(
-        8,
-        min(
-            size,
-            128
-        )
-    )
-
-
+    # Keep the existing color range.
     colors = max(
         2,
         min(
@@ -197,7 +210,6 @@ def convert():
         pixel_data=pixel_data,
         title="My Pixel Art"
     )
-
 
 
 @studio_bp.route(
@@ -372,9 +384,11 @@ def save_artwork():
     return jsonify({
         "success": True,
         "message": "Artwork saved successfully.",
-        "artwork_id": artwork.id
+        "artwork_id": artwork.id,
+        "redirect_url": url_for(
+            "main.dashboard"
+        )
     })
-
 
 
 @studio_bp.route(

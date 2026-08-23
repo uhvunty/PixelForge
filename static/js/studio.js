@@ -1,60 +1,85 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const canvas = document.getElementById("studio-canvas");
+    const canvas =
+        document.getElementById("studio-canvas");
 
     if (!canvas) {
-        console.error("PixelForge: studio-canvas not found.");
+
+        console.error(
+            "PixelForge: studio-canvas not found."
+        );
+
         return;
     }
+
 
     const colorInput =
         document.getElementById("studio-color");
 
+
     const sizeSelect =
         document.getElementById("studio-grid-size");
+
 
     const sizeDisplay =
         document.getElementById("studio-size-display");
 
+
     const titleInput =
         document.getElementById("studio-title");
+
 
     const clearButton =
         document.getElementById("studio-clear");
 
+
     const downloadButton =
         document.getElementById("studio-download");
+
 
     const saveButton =
         document.getElementById("studio-save");
 
+
     const undoButton =
         document.getElementById("studio-undo");
+
 
     const redoButton =
         document.getElementById("studio-redo");
 
+
     const gridButton =
         document.getElementById("studio-grid");
+
 
     const message =
         document.getElementById("studio-message");
 
 
+
     /* =====================================
-       CREATE EDITOR
+       EDITOR
     ===================================== */
 
     let size = 32;
 
+
     if (sizeSelect) {
 
         const selected =
-            parseInt(sizeSelect.value);
+            parseInt(sizeSelect.value, 10);
 
-        if (!Number.isNaN(selected)) {
+
+        if (
+            selected === 16 ||
+            selected === 32
+        ) {
+
             size = selected;
+
         }
+
     }
 
 
@@ -64,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
             size,
             size
         );
+
 
 
     /* =====================================
@@ -76,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
             colorInput.value
         );
 
+
         colorInput.addEventListener(
             "input",
             () => {
@@ -84,10 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     colorInput.value
                 );
 
+
                 setActiveTool("brush");
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -98,24 +129,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         editor.setTool(tool);
 
+
         const buttons =
             document.querySelectorAll(
                 ".tool-button"
             );
 
+
         buttons.forEach(
             button => {
 
-                const buttonTool =
-                    button.dataset.tool;
-
                 button.classList.toggle(
                     "active",
-                    buttonTool === tool
+                    button.dataset.tool === tool
                 );
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -138,15 +171,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     const tool =
                         button.dataset.tool;
 
+
                     if (!tool) {
                         return;
                     }
 
+
                     setActiveTool(tool);
+
                 }
             );
+
         }
     );
+
 
 
     /* =====================================
@@ -168,14 +206,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const brushSize =
                         parseInt(
-                            button.dataset.brushSize
+                            button.dataset.brushSize,
+                            10
                         );
+
 
                     if (
                         Number.isNaN(brushSize)
                     ) {
+
                         return;
+
                     }
+
 
                     editor.setBrushSize(
                         brushSize
@@ -189,12 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "active",
                                 otherButton === button
                             );
+
                         }
                     );
+
                 }
             );
+
         }
     );
+
 
 
     /* =====================================
@@ -207,12 +254,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         sizeDisplay.textContent =
             `${size} × ${size}`;
+
     }
 
 
     updateSizeDisplay();
+
 
 
     /* =====================================
@@ -227,13 +277,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const newSize =
                     parseInt(
-                        sizeSelect.value
+                        sizeSelect.value,
+                        10
                     );
 
+
+                /*
+                 * Only 16 and 32 are allowed.
+                 */
+
                 if (
-                    Number.isNaN(newSize)
+                    newSize !== 16 &&
+                    newSize !== 32
                 ) {
+
+                    sizeSelect.value =
+                        size;
+
                     return;
+
                 }
 
 
@@ -244,10 +306,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
 
                     editor.destroy();
+
                 }
 
 
-                size = newSize;
+                size =
+                    newSize;
 
 
                 editor =
@@ -263,17 +327,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     editor.setColor(
                         colorInput.value
                     );
+
                 }
 
 
-                setActiveTool("brush");
-
-
-                /*
-                 * Reset brush size.
-                 */
-
                 editor.setBrushSize(1);
+
+
+                setActiveTool("brush");
 
 
                 brushSizeButtons.forEach(
@@ -283,14 +344,18 @@ document.addEventListener("DOMContentLoaded", () => {
                             "active",
                             index === 0
                         );
+
                     }
                 );
 
 
                 updateSizeDisplay();
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -305,13 +370,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 editor.clear();
 
+
                 showMessage(
                     "Canvas cleared.",
                     "success"
                 );
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -325,9 +394,12 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 editor.download();
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -341,9 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 editor.undo();
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -357,9 +432,12 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 editor.redo();
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -375,17 +453,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 const visible =
                     editor.toggleGrid();
 
+
                 gridButton.classList.toggle(
                     "active",
                     visible
                 );
+
             }
         );
+
     }
 
 
+
     /* =====================================
-       SAVE
+       SAVE ARTWORK
     ===================================== */
 
     if (saveButton) {
@@ -407,24 +489,35 @@ document.addEventListener("DOMContentLoaded", () => {
                         "error"
                     );
 
+
                     if (titleInput) {
+
                         titleInput.focus();
+
                     }
 
+
                     return;
+
                 }
 
 
                 saveButton.disabled = true;
 
+
                 const originalText =
                     saveButton.textContent;
+
 
                 saveButton.textContent =
                     "Saving...";
 
 
                 try {
+
+                    const editorData =
+                        editor.getData();
+
 
                     const response =
                         await fetch(
@@ -440,13 +533,14 @@ document.addEventListener("DOMContentLoaded", () => {
                                 body:
                                     JSON.stringify({
                                         title: title,
-                                        ...editor.getData()
+                                        ...editorData
                                     })
                             }
                         );
 
 
                     let result;
+
 
                     try {
 
@@ -456,25 +550,53 @@ document.addEventListener("DOMContentLoaded", () => {
                     } catch (error) {
 
                         result = {
+                            success: false,
                             message:
                                 "Invalid server response."
                         };
+
                     }
 
 
-                    if (!response.ok) {
+                    if (
+                        !response.ok ||
+                        !result.success
+                    ) {
 
                         throw new Error(
                             result.message ||
                             "Unable to save artwork."
                         );
+
                     }
 
 
+                    /*
+                     * Save was successful.
+                     *
+                     * Instead of leaving the user
+                     * inside the editor, return them
+                     * directly to their dashboard.
+                     */
+
+                    saveButton.textContent =
+                        "Saved!";
+
+
                     showMessage(
-                        result.message ||
-                        "Artwork saved successfully.",
+                        "Artwork saved. Returning to dashboard...",
                         "success"
+                    );
+
+
+                    setTimeout(
+                        () => {
+
+                            window.location.href =
+                                "/dashboard";
+
+                        },
+                        700
                     );
 
 
@@ -493,16 +615,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                } finally {
+                    saveButton.disabled =
+                        false;
 
-                    saveButton.disabled = false;
 
                     saveButton.textContent =
                         originalText;
+
                 }
+
             }
         );
+
     }
+
 
 
     /* =====================================
@@ -517,11 +643,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.activeElement;
 
 
-            /*
-             * Don't activate shortcuts while
-             * typing into forms.
-             */
-
             if (
                 active &&
                 (
@@ -532,6 +653,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 return;
+
             }
 
 
@@ -539,57 +661,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.key.toLowerCase();
 
 
-            /*
-             * Brush
-             */
 
             if (key === "b") {
 
                 event.preventDefault();
 
                 setActiveTool("brush");
+
             }
 
-
-            /*
-             * Eraser
-             */
 
             else if (key === "e") {
 
                 event.preventDefault();
 
                 setActiveTool("eraser");
+
             }
 
-
-            /*
-             * Fill
-             */
 
             else if (key === "g") {
 
                 event.preventDefault();
 
                 setActiveTool("fill");
+
             }
 
-
-            /*
-             * Picker
-             */
 
             else if (key === "i") {
 
                 event.preventDefault();
 
                 setActiveTool("picker");
+
             }
 
-
-            /*
-             * Undo
-             */
 
             else if (
                 event.ctrlKey &&
@@ -599,12 +706,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.preventDefault();
 
                 editor.undo();
+
             }
 
-
-            /*
-             * Redo
-             */
 
             else if (
                 event.ctrlKey &&
@@ -614,9 +718,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.preventDefault();
 
                 editor.redo();
+
             }
+
         }
     );
+
 
 
     /* =====================================
@@ -635,6 +742,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         message.textContent =
             text;
+
 
         message.className =
             `studio-message ${type}`;
@@ -655,12 +763,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 4000
             );
+
     }
 
 
-    /*
-     * Start with Brush selected.
-     */
+
+    /* =====================================
+       INITIAL STATE
+    ===================================== */
 
     setActiveTool("brush");
 

@@ -1,13 +1,14 @@
 import io
-import math
 
 import cv2
 import numpy as np
 
 
-ALLOWED_CHANNELS = {
-    3,
-    4
+# Image conversion is intentionally limited
+# to these two resolutions.
+ALLOWED_PIXEL_SIZES = {
+    16,
+    32
 }
 
 
@@ -17,28 +18,34 @@ def _read_image(file):
 
     raw = file.read()
 
+
     if not raw:
+
         raise ValueError(
             "The uploaded file is empty."
         )
+
 
     array = np.frombuffer(
         raw,
         dtype=np.uint8
     )
 
+
     image = cv2.imdecode(
         array,
         cv2.IMREAD_UNCHANGED
     )
 
+
     if image is None:
+
         raise ValueError(
             "The uploaded file is not a valid image."
         )
 
-    return image
 
+    return image
 
 
 def _ensure_bgr(image):
@@ -62,13 +69,13 @@ def _ensure_bgr(image):
     return image
 
 
-
 def _resize_pixel_image(
     image,
     size
 ):
 
     height, width = image.shape[:2]
+
 
     if width <= 0 or height <= 0:
 
@@ -120,6 +127,7 @@ def _resize_pixel_image(
         size - new_width
     ) // 2
 
+
     y_offset = (
         size - new_height
     ) // 2
@@ -134,7 +142,6 @@ def _resize_pixel_image(
 
 
     return canvas
-
 
 
 def _reduce_colors(
@@ -169,7 +176,7 @@ def _reduce_colors(
         return image
 
 
-    compactness, labels, centers = cv2.kmeans(
+    _, labels, centers = cv2.kmeans(
         pixels,
         clusters,
         None,
@@ -194,7 +201,6 @@ def _reduce_colors(
     )
 
 
-
 def _pixel_data_from_image(
     image
 ):
@@ -208,9 +214,7 @@ def _pixel_data_from_image(
 
         for x in range(width):
 
-            b, g, r = (
-                image[y, x]
-            )
+            b, g, r = image[y, x]
 
 
             color = (
@@ -234,7 +238,6 @@ def _pixel_data_from_image(
     }
 
 
-
 def convert_image_to_pixels(
     file,
     size=32,
@@ -244,7 +247,6 @@ def convert_image_to_pixels(
     try:
 
         size = int(size)
-
         colors = int(colors)
 
     except (
@@ -257,13 +259,13 @@ def convert_image_to_pixels(
         )
 
 
-    size = max(
-        8,
-        min(
-            size,
-            128
+    # Reject unsupported resolutions instead
+    # of silently processing a huge image.
+    if size not in ALLOWED_PIXEL_SIZES:
+
+        raise ValueError(
+            "Pixel resolution must be 16 × 16 or 32 × 32."
         )
-    )
 
 
     colors = max(
@@ -302,7 +304,6 @@ def convert_image_to_pixels(
     )
 
 
-
 def pixel_data_to_image(
     pixel_data
 ):
@@ -333,6 +334,7 @@ def pixel_data_to_image(
     )
 
 
+    # Keep support for existing saved artwork.
     width = max(
         1,
         min(
@@ -401,9 +403,7 @@ def pixel_data_to_image(
                 continue
 
 
-            color = color.lstrip(
-                "#"
-            )
+            color = color.lstrip("#")
 
 
             r = int(
@@ -436,6 +436,7 @@ def pixel_data_to_image(
                     r
                 ]
 
+
         except (
             KeyError,
             TypeError,
@@ -447,7 +448,6 @@ def pixel_data_to_image(
 
 
     return image
-
 
 
 def pixel_data_to_png(

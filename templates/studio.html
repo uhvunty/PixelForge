@@ -39,6 +39,7 @@ Pixel Studio — PixelForge
     </div>
 
 
+
     <div class="studio-layout">
 
 
@@ -46,6 +47,8 @@ Pixel Studio — PixelForge
 
         <aside class="studio-controls">
 
+
+            <!-- ARTWORK TITLE -->
 
             <div class="control-card">
 
@@ -63,6 +66,8 @@ Pixel Studio — PixelForge
             </div>
 
 
+
+            <!-- CANVAS SIZE -->
 
             <div class="control-card">
 
@@ -83,19 +88,21 @@ Pixel Studio — PixelForge
                         32 × 32
                     </option>
 
-                    <option value="64">
-                        64 × 64
-                    </option>
-
                 </select>
+
+                <small class="control-help">
+                    Maximum canvas size: 32 × 32
+                </small>
 
             </div>
 
 
 
+            <!-- COLOR -->
+
             <div class="control-card">
 
-                <label>
+                <label for="studio-color">
                     Color
                 </label>
 
@@ -118,7 +125,7 @@ Pixel Studio — PixelForge
 
 
 
-            <!-- TOOLBOX -->
+            <!-- TOOLS -->
 
             <div class="control-card">
 
@@ -144,6 +151,7 @@ Pixel Studio — PixelForge
                         data-tool="brush"
                         title="Brush (B)"
                     >
+
                         <span class="tool-icon">
                             ✎
                         </span>
@@ -151,6 +159,7 @@ Pixel Studio — PixelForge
                         <span>
                             Brush
                         </span>
+
                     </button>
 
 
@@ -161,6 +170,7 @@ Pixel Studio — PixelForge
                         data-tool="eraser"
                         title="Eraser (E)"
                     >
+
                         <span class="tool-icon">
                             ⌫
                         </span>
@@ -168,6 +178,7 @@ Pixel Studio — PixelForge
                         <span>
                             Eraser
                         </span>
+
                     </button>
 
 
@@ -178,6 +189,7 @@ Pixel Studio — PixelForge
                         data-tool="fill"
                         title="Fill (G)"
                     >
+
                         <span class="tool-icon">
                             ◈
                         </span>
@@ -185,6 +197,7 @@ Pixel Studio — PixelForge
                         <span>
                             Fill
                         </span>
+
                     </button>
 
 
@@ -195,6 +208,7 @@ Pixel Studio — PixelForge
                         data-tool="picker"
                         title="Color Picker (I)"
                     >
+
                         <span class="tool-icon">
                             ◉
                         </span>
@@ -202,7 +216,9 @@ Pixel Studio — PixelForge
                         <span>
                             Picker
                         </span>
+
                     </button>
+
 
                 </div>
 
@@ -224,7 +240,6 @@ Pixel Studio — PixelForge
 
 
                 <div class="brush-size-buttons">
-
 
                     <button
                         type="button"
@@ -352,18 +367,19 @@ Pixel Studio — PixelForge
                 </strong>
 
                 <p>
-                    Use the brush to draw, fill large
-                    areas with the bucket, or use the
-                    picker to grab a color from your art.
+                    Use Brush to draw, Eraser to remove
+                    pixels, Fill to color an area, or
+                    Picker to select a color from your art.
                 </p>
 
             </div>
+
 
         </aside>
 
 
 
-        <!-- CANVAS -->
+        <!-- CANVAS AREA -->
 
         <div class="studio-canvas-area">
 
@@ -381,7 +397,6 @@ Pixel Studio — PixelForge
 
 
                 <div class="canvas-toolbar-actions">
-
 
                     <button
                         type="button"
@@ -444,7 +459,9 @@ Pixel Studio — PixelForge
 
             </div>
 
+
         </div>
+
 
     </div>
 

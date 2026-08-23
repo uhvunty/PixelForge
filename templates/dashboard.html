@@ -1,99 +1,155 @@
 {% extends "base.html" %}
 
+
 {% block title %}
 Dashboard — PixelForge
 {% endblock %}
+
 
 
 {% block content %}
 
 <section class="dashboard-page">
 
+
+    <!-- HEADER -->
+
     <div class="dashboard-header">
 
         <div>
 
             <span class="section-label">
-                YOUR WORKSPACE
+                PIXELFORGE WORKSPACE
             </span>
 
             <h1>
-                Welcome,
-                {{ current_user.username }}
+                Welcome, {{ current_user.username }}
             </h1>
 
             <p>
-                Continue creating or start something new.
+                Choose what you want to create.
             </p>
 
         </div>
 
-
-        <div class="dashboard-actions">
-
-            <a
-                href="{{ url_for('studio.studio') }}"
-                class="button primary"
-            >
-                New Artwork
-            </a>
-
-            <a
-                href="{{ url_for('studio.convert') }}"
-                class="button secondary"
-            >
-                Convert Image
-            </a>
-
-        </div>
-
     </div>
 
 
-    <div class="dashboard-stats">
 
-        <div class="stat-card">
+    <!-- MAIN MODES -->
 
-            <span>
-                ARTWORKS
+    <section class="dashboard-modes">
+
+
+        <a
+            href="{{ url_for('studio.studio') }}"
+            class="dashboard-mode-card"
+        >
+
+            <div class="mode-icon">
+                ✎
+            </div>
+
+            <div class="mode-content">
+
+                <span class="section-label">
+                    CREATE
+                </span>
+
+                <h2>
+                    Create Drawing
+                </h2>
+
+                <p>
+                    Draw your pixel art from scratch
+                    using the PixelForge editor.
+                </p>
+
+            </div>
+
+            <span class="mode-arrow">
+                →
             </span>
 
-            <strong>
-                {{ artworks|length }}
-            </strong>
-
-        </div>
+        </a>
 
 
-        <div class="stat-card">
 
-            <span>
-                MODE
+        <a
+            href="{{ url_for('studio.convert') }}"
+            class="dashboard-mode-card"
+        >
+
+            <div class="mode-icon">
+                ▦
+            </div>
+
+            <div class="mode-content">
+
+                <span class="section-label">
+                    CONVERT
+                </span>
+
+                <h2>
+                    Make Pixel Art
+                </h2>
+
+                <p>
+                    Upload an image and turn it into
+                    pixel art.
+                </p>
+
+            </div>
+
+            <span class="mode-arrow">
+                →
             </span>
 
-            <strong>
-                Creative
-            </strong>
-
-        </div>
+        </a>
 
 
-        <div class="stat-card">
 
-            <span>
-                MULTIPLAYER
+        <a
+            href="{{ url_for('multiplayer.multiplayer') }}"
+            class="dashboard-mode-card"
+        >
+
+            <div class="mode-icon">
+                ♟
+            </div>
+
+            <div class="mode-content">
+
+                <span class="section-label">
+                    PLAY TOGETHER
+                </span>
+
+                <h2>
+                    Multiplayer Mode
+                </h2>
+
+                <p>
+                    Paint together with other players
+                    in real time.
+                </p>
+
+            </div>
+
+            <span class="mode-arrow">
+                →
             </span>
 
-            <strong>
-                Live
-            </strong>
+        </a>
 
-        </div>
 
-    </div>
+    </section>
 
+
+
+    <!-- SAVED ARTWORK -->
 
     <section class="dashboard-section">
+
 
         <div class="section-heading-inline">
 
@@ -109,14 +165,18 @@ Dashboard — PixelForge
 
             </div>
 
-            <a
-                href="{{ url_for('studio.studio') }}"
-                class="text-link"
-            >
-                Create new →
-            </a>
+
+            {% if artworks %}
+
+                <span class="artwork-count">
+                    {{ artworks|length }}
+                    artwork{% if artworks|length != 1 %}s{% endif %}
+                </span>
+
+            {% endif %}
 
         </div>
+
 
 
         {% if artworks %}
@@ -131,7 +191,7 @@ Dashboard — PixelForge
 
                             <canvas
                                 class="saved-artwork-canvas"
-                                data-pixels='{{ artwork.pixel_data | e }}'
+                                data-pixels="{{ artwork.pixel_data | e }}"
                             ></canvas>
 
                         </div>
@@ -163,6 +223,7 @@ Dashboard — PixelForge
 
             </div>
 
+
         {% else %}
 
             <div class="empty-state">
@@ -180,68 +241,26 @@ Dashboard — PixelForge
                     and it will appear here.
                 </p>
 
+
                 <a
                     href="{{ url_for('studio.studio') }}"
                     class="button primary"
                 >
-                    Create Artwork
+                    Create Drawing
                 </a>
 
             </div>
 
         {% endif %}
 
-    </section>
-
-
-    <section class="quick-actions">
-
-        <a
-            href="{{ url_for('studio.studio') }}"
-            class="quick-action"
-        >
-            <strong>
-                Pixel Studio
-            </strong>
-
-            <span>
-                Draw from scratch →
-            </span>
-        </a>
-
-
-        <a
-            href="{{ url_for('studio.convert') }}"
-            class="quick-action"
-        >
-            <strong>
-                Image Converter
-            </strong>
-
-            <span>
-                Turn images into pixel art →
-            </span>
-        </a>
-
-
-        <a
-            href="{{ url_for('multiplayer.multiplayer') }}"
-            class="quick-action"
-        >
-            <strong>
-                Multiplayer
-            </strong>
-
-            <span>
-                Paint together →
-            </span>
-        </a>
 
     </section>
+
 
 </section>
 
 {% endblock %}
+
 
 
 {% block scripts %}
@@ -264,10 +283,6 @@ document.addEventListener(
                 let data;
 
 
-                /*
-                 * Read saved artwork data.
-                 */
-
                 try {
 
                     data =
@@ -289,7 +304,6 @@ document.addEventListener(
                 const width =
                     Number(data.width);
 
-
                 const height =
                     Number(data.height);
 
@@ -309,15 +323,6 @@ document.addEventListener(
                 }
 
 
-                /*
-                 * Keep the canvas internally
-                 * at a sensible resolution.
-                 *
-                 * This makes the preview sharp
-                 * instead of stretching a tiny
-                 * 16x16/32x32 canvas.
-                 */
-
                 const previewSize = 256;
 
 
@@ -333,23 +338,17 @@ document.addEventListener(
 
 
                 const context =
-                    canvas.getContext(
-                        "2d"
-                    );
+                    canvas.getContext("2d");
 
 
-                /*
-                 * Disable smoothing so
-                 * pixel art stays sharp.
-                 */
+                if (!context) {
+                    return;
+                }
+
 
                 context.imageSmoothingEnabled =
                     false;
 
-
-                /*
-                 * Clear the canvas.
-                 */
 
                 context.clearRect(
                     0,
@@ -358,10 +357,6 @@ document.addEventListener(
                     previewSize
                 );
 
-
-                /*
-                 * White background.
-                 */
 
                 context.fillStyle =
                     "#ffffff";
@@ -375,77 +370,65 @@ document.addEventListener(
                 );
 
 
-                /*
-                 * Size of one visible pixel.
-                 */
-
                 const pixelWidth =
                     previewSize / width;
-
 
                 const pixelHeight =
                     previewSize / height;
 
 
-                /*
-                 * Draw saved pixels.
-                 */
-
                 if (
-                    Array.isArray(
-                        data.pixels
-                    )
+                    !Array.isArray(data.pixels)
                 ) {
-
-                    data.pixels.forEach(
-                        (pixel) => {
-
-                            const x =
-                                Number(pixel.x);
-
-
-                            const y =
-                                Number(pixel.y);
-
-
-                            const color =
-                                pixel.color;
-
-
-                            if (
-                                !Number.isFinite(x) ||
-                                !Number.isFinite(y) ||
-                                !color
-                            ) {
-                                return;
-                            }
-
-
-                            if (
-                                x < 0 ||
-                                x >= width ||
-                                y < 0 ||
-                                y >= height
-                            ) {
-                                return;
-                            }
-
-
-                            context.fillStyle =
-                                color;
-
-
-                            context.fillRect(
-                                x * pixelWidth,
-                                y * pixelHeight,
-                                pixelWidth + 0.5,
-                                pixelHeight + 0.5
-                            );
-
-                        }
-                    );
-
+                    return;
                 }
+
+
+                data.pixels.forEach(
+                    (pixel) => {
+
+                        const x =
+                            Number(pixel.x);
+
+                        const y =
+                            Number(pixel.y);
+
+                        const color =
+                            pixel.color;
+
+
+                        if (
+                            !Number.isFinite(x) ||
+                            !Number.isFinite(y) ||
+                            !color
+                        ) {
+                            return;
+                        }
+
+
+                        if (
+                            x < 0 ||
+                            x >= width ||
+                            y < 0 ||
+                            y >= height
+                        ) {
+                            return;
+                        }
+
+
+                        context.fillStyle =
+                            color;
+
+
+                        context.fillRect(
+                            x * pixelWidth,
+                            y * pixelHeight,
+                            pixelWidth + 0.5,
+                            pixelHeight + 0.5
+                        );
+
+                    }
+                );
 
             }
         );

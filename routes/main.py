@@ -25,7 +25,6 @@ def index():
     )
 
 
-
 @main_bp.route("/dashboard")
 @login_required
 def dashboard():
@@ -36,12 +35,10 @@ def dashboard():
         Artwork.created_at.desc()
     ).all()
 
-
     return render_template(
         "dashboard.html",
         artworks=artworks
     )
-
 
 
 @main_bp.route("/profile")
@@ -51,7 +48,6 @@ def profile():
     artwork_count = Artwork.query.filter_by(
         user_id=current_user.id
     ).count()
-
 
     return render_template(
         "profile.html",

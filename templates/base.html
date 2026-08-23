@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -23,9 +25,12 @@
     >
 
     {% block head %}{% endblock %}
+
 </head>
 
+
 <body>
+
 
 <nav class="navbar">
 
@@ -36,42 +41,61 @@
         PixelForge
     </a>
 
-    <div class="navbar-links">
 
-        {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated %}
 
-            <a href="{{ url_for('main.dashboard') }}">
-                Dashboard
+        <!-- MAIN USER TOOLBAR -->
+
+        <div class="navbar-links pixelforge-toolbar">
+
+            <a
+                href="{{ url_for('studio.studio') }}"
+                class="toolbar-item"
+            >
+                <span class="toolbar-icon">✎</span>
+                <span>Create Drawing</span>
             </a>
 
-            <a href="{{ url_for('studio.studio') }}">
-                Studio
+
+            <a
+                href="{{ url_for('studio.convert') }}"
+                class="toolbar-item"
+            >
+                <span class="toolbar-icon">▦</span>
+                <span>Make Pixel Art</span>
             </a>
 
-            <a href="{{ url_for('studio.convert') }}">
-                Convert
+
+            <a
+                href="{{ url_for('multiplayer.multiplayer') }}"
+                class="toolbar-item"
+            >
+                <span class="toolbar-icon">♟</span>
+                <span>Multiplayer Mode</span>
             </a>
 
-            <a href="{{ url_for('multiplayer.multiplayer') }}">
-                Multiplayer
-            </a>
-
-            <a href="{{ url_for('main.profile') }}">
-                Profile
-            </a>
 
             <a
                 href="{{ url_for('auth.logout') }}"
-                class="nav-button"
+                class="toolbar-item logout-item"
             >
-                Logout
+                <span class="toolbar-icon">↪</span>
+                <span>Logout</span>
             </a>
 
-        {% else %}
+        </div>
 
-            <a href="{{ url_for('auth.login') }}">
+
+    {% else %}
+
+        <div class="navbar-links">
+
+            <a
+                href="{{ url_for('auth.login') }}"
+            >
                 Login
             </a>
+
 
             <a
                 href="{{ url_for('auth.register') }}"
@@ -80,14 +104,16 @@
                 Register
             </a>
 
-        {% endif %}
+        </div>
 
-    </div>
+    {% endif %}
 
 </nav>
 
 
+
 <main class="page-content">
+
 
     {% with messages = get_flashed_messages(
         with_categories=true
@@ -116,7 +142,9 @@
 
     {% block content %}{% endblock %}
 
+
 </main>
+
 
 
 <footer class="footer">
@@ -134,5 +162,7 @@
 
 {% block scripts %}{% endblock %}
 
+
 </body>
+
 </html>

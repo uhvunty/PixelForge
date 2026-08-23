@@ -1,7 +1,7 @@
-import json
 import random
 import string
-import time
+
+from datetime import datetime, timedelta
 
 from flask import (
     Blueprint,
@@ -18,17 +18,12 @@ from flask_login import (
     current_user
 )
 
-from extensions import (
-    db,
-    socketio
-)
+from extensions import db
 
-from models import Room
-
-from flask_socketio import (
-    emit,
-    join_room,
-    leave_room
+from models import (
+    Room,
+    Pixel,
+    RoomPlayer
 )
 
 
@@ -41,15 +36,9 @@ multiplayer_bp = Blueprint(
 
 DEFAULT_GRID_SIZE = 64
 
-PIXEL_LIMIT = 100
+MAX_PLAYERS = 3
 
-PIXEL_COOLDOWN = 1
-
-
-active_players = {}
-
-pixel_timestamps = {}
-
+PLAYER_TIMEOUT_SECONDS = 15
 
 
 def generate_room_code():
@@ -59,68 +48,77 @@ def generate_room_code():
         + string.digits
     )
 
-
     while True:
 
         code = "".join(
-            random.choice(
-                characters
-            )
+            random.choice(characters)
             for _ in range(6)
         )
 
+        existing = Room.query.filter_by(
+            room_code=code
+        ).first()
 
-        if not Room.query.filter_by(
-            code=code
-        ).first():
+        if existing is None:
 
             return code
 
 
+def cleanup_players(room):
 
-def create_empty_canvas(
-    size
-):
+    cutoff = (
+        datetime.utcnow()
+        - timedelta(
+            seconds=PLAYER_TIMEOUT_SECONDS
+        )
+    )
 
-    pixels = []
+    RoomPlayer.query.filter(
+        RoomPlayer.room_id == room.id,
+        RoomPlayer.last_seen < cutoff
+    ).delete(
+        synchronize_session=False
+    )
 
-    for y in range(size):
+    db.session.commit()
 
-        for x in range(size):
 
-            pixels.append({
-                "x": x,
-                "y": y,
-                "color": "#ffffff"
-            })
+def get_player_count(room):
 
+    cleanup_players(room)
+
+    return RoomPlayer.query.filter_by(
+        room_id=room.id
+    ).count()
+
+
+def get_current_player(room):
+
+    return RoomPlayer.query.filter_by(
+        room_id=room.id,
+        user_id=current_user.id
+    ).first()
+
+
+def get_canvas(room):
+
+    pixels = Pixel.query.filter_by(
+        room_id=room.id
+    ).all()
 
     return {
-        "width": size,
-        "height": size,
-        "pixels": pixels
+        "width": room.width,
+        "height": room.height,
+        "pixels": [
+            pixel.to_dict()
+            for pixel in pixels
+        ]
     }
 
 
-
-def get_room_canvas(room):
-
-    try:
-
-        return json.loads(
-            room.canvas
-        )
-
-    except (
-        json.JSONDecodeError,
-        TypeError
-    ):
-
-        return create_empty_canvas(
-            room.grid_size
-        )
-
-
+# =========================================================
+# MULTIPLAYER HOME
+# =========================================================
 
 @multiplayer_bp.route("/")
 @login_required
@@ -131,6 +129,9 @@ def multiplayer():
     )
 
 
+# =========================================================
+# CREATE ROOM
+# =========================================================
 
 @multiplayer_bp.route(
     "/create",
@@ -145,20 +146,16 @@ def create_room():
             "create_room.html"
         )
 
-
     room_name = request.form.get(
         "room_name",
         "Pixel Room"
     ).strip()
 
-
     if not room_name:
 
         room_name = "Pixel Room"
 
-
     room_name = room_name[:100]
-
 
     try:
 
@@ -169,10 +166,12 @@ def create_room():
             )
         )
 
-    except ValueError:
+    except (
+        TypeError,
+        ValueError
+    ):
 
         grid_size = DEFAULT_GRID_SIZE
-
 
     if grid_size not in (
         32,
@@ -181,40 +180,29 @@ def create_room():
 
         grid_size = DEFAULT_GRID_SIZE
 
-
-    code = generate_room_code()
-
-
-    canvas = create_empty_canvas(
-        grid_size
-    )
-
-
     room = Room(
-        code=code,
+        room_code=generate_room_code(),
         name=room_name,
-        grid_size=grid_size,
-        canvas=json.dumps(
-            canvas
-        )
+        width=grid_size,
+        height=grid_size,
+        created_by=current_user.id
     )
 
-
-    db.session.add(
-        room
-    )
+    db.session.add(room)
 
     db.session.commit()
-
 
     return redirect(
         url_for(
             "multiplayer.room",
-            room_code=code
+            room_code=room.room_code
         )
     )
 
 
+# =========================================================
+# JOIN PAGE
+# =========================================================
 
 @multiplayer_bp.route(
     "/join",
@@ -229,17 +217,14 @@ def join_room():
             "join_room.html"
         )
 
-
     code = request.form.get(
         "room_code",
         ""
     ).strip().upper()
 
-
     room = Room.query.filter_by(
-        code=code
+        room_code=code
     ).first()
-
 
     if room is None:
 
@@ -254,15 +239,17 @@ def join_room():
             )
         )
 
-
     return redirect(
         url_for(
             "multiplayer.room",
-            room_code=room.code
+            room_code=room.room_code
         )
     )
 
 
+# =========================================================
+# ROOM PAGE
+# =========================================================
 
 @multiplayer_bp.route(
     "/room/<room_code>"
@@ -271,168 +258,181 @@ def join_room():
 def room(room_code):
 
     room = Room.query.filter_by(
-        code=room_code.upper()
+        room_code=room_code.upper()
     ).first_or_404()
-
 
     return render_template(
         "multiplayer.html",
-        room_code=room.code,
+        room_code=room.room_code,
         room_name=room.name,
-        grid_size=room.grid_size
+        grid_size=room.width
     )
 
 
+# =========================================================
+# JOIN API
+# =========================================================
 
 @multiplayer_bp.route(
-    "/api/<room_code>"
+    "/api/<room_code>/join",
+    methods=["POST"]
 )
 @login_required
-def room_data(room_code):
+def api_join_room(room_code):
 
     room = Room.query.filter_by(
-        code=room_code.upper()
-    ).first_or_404()
+        room_code=room_code.upper()
+    ).first()
 
+    if room is None:
 
-    canvas = get_room_canvas(
+        return jsonify({
+            "success": False,
+            "message": "Room does not exist."
+        }), 404
+
+    cleanup_players(room)
+
+    existing_player = get_current_player(
         room
     )
 
+    # Already in the room.
+    if existing_player:
+
+        existing_player.last_seen = (
+            datetime.utcnow()
+        )
+
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "players": get_player_count(room),
+            "max_players": MAX_PLAYERS,
+            "canvas": get_canvas(room)
+        })
+
+    player_count = get_player_count(
+        room
+    )
+
+    if player_count >= MAX_PLAYERS:
+
+        return jsonify({
+            "success": False,
+            "message": (
+                "This room is full. "
+                "Maximum 3 players are allowed."
+            )
+        }), 409
+
+    player = RoomPlayer(
+        room_id=room.id,
+        user_id=current_user.id,
+        last_seen=datetime.utcnow()
+    )
+
+    db.session.add(player)
+
+    db.session.commit()
 
     return jsonify({
         "success": True,
-        "room": {
-            "code": room.code,
-            "name": room.name,
-            "grid_size": room.grid_size
-        },
-        "canvas": canvas
+        "players": get_player_count(room),
+        "max_players": MAX_PLAYERS,
+        "canvas": get_canvas(room)
     })
 
 
+# =========================================================
+# ROOM STATE
+# =========================================================
 
-@socketio.on("join_canvas")
-def handle_join_canvas(data):
-
-    if not current_user.is_authenticated:
-
-        return
-
-
-    room_code = str(
-        data.get(
-            "room_code",
-            ""
-        )
-    ).upper()
-
+@multiplayer_bp.route(
+    "/api/<room_code>/state"
+)
+@login_required
+def api_room_state(room_code):
 
     room = Room.query.filter_by(
-        code=room_code
+        room_code=room_code.upper()
     ).first()
-
 
     if room is None:
 
-        emit(
-            "canvas_error",
-            {
-                "message": "Room does not exist."
-            }
-        )
+        return jsonify({
+            "success": False,
+            "message": "Room does not exist."
+        }), 404
 
-        return
-
-
-    join_room(
-        room_code
-    )
-
-
-    active_players.setdefault(
-        room_code,
-        set()
-    )
-
-
-    active_players[
-        room_code
-    ].add(
-        current_user.id
-    )
-
-
-    canvas = get_room_canvas(
+    player = get_current_player(
         room
     )
 
+    if player is None:
 
-    emit(
-        "canvas_state",
-        {
-            "canvas": canvas
-        }
-    )
-
-
-    emit(
-        "player_count",
-        {
-            "count": len(
-                active_players[
-                    room_code
-                ]
+        return jsonify({
+            "success": False,
+            "message": (
+                "You are not currently "
+                "in this room."
             )
-        },
-        to=room_code
-    )
+        }), 403
+
+    player.last_seen = datetime.utcnow()
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "players": get_player_count(room),
+        "max_players": MAX_PLAYERS,
+        "canvas": get_canvas(room)
+    })
 
 
-    emit(
-        "player_joined",
-        {
-            "username":
-                current_user.username
-        },
-        to=room_code,
-        include_self=False
-    )
+# =========================================================
+# PAINT PIXEL
+# =========================================================
 
-
-
-@socketio.on("paint_pixel")
-def handle_paint_pixel(data):
-
-    if not current_user.is_authenticated:
-
-        return
-
-
-    room_code = str(
-        data.get(
-            "room_code",
-            ""
-        )
-    ).upper()
-
+@multiplayer_bp.route(
+    "/api/<room_code>/paint",
+    methods=["POST"]
+)
+@login_required
+def api_paint_pixel(room_code):
 
     room = Room.query.filter_by(
-        code=room_code
+        room_code=room_code.upper()
     ).first()
-
 
     if room is None:
 
-        emit(
-            "canvas_error",
-            {
-                "message": "Room does not exist."
-            }
-        )
+        return jsonify({
+            "success": False,
+            "message": "Room does not exist."
+        }), 404
 
-        return
+    player = get_current_player(
+        room
+    )
 
+    if player is None:
+
+        return jsonify({
+            "success": False,
+            "message": (
+                "You are not currently "
+                "in this room."
+            )
+        }), 403
+
+    player.last_seen = datetime.utcnow()
+
+    data = request.get_json(
+        silent=True
+    ) or {}
 
     try:
 
@@ -449,23 +449,17 @@ def handle_paint_pixel(data):
         ValueError
     ):
 
-        emit(
-            "canvas_error",
-            {
-                "message": "Invalid pixel position."
-            }
-        )
-
-        return
-
+        return jsonify({
+            "success": False,
+            "message": "Invalid pixel position."
+        }), 400
 
     color = str(
         data.get(
             "color",
             "#000000"
         )
-    )
-
+    ).strip().lower()
 
     if (
         not color.startswith("#")
@@ -475,175 +469,95 @@ def handle_paint_pixel(data):
         )
     ):
 
-        emit(
-            "canvas_error",
-            {
-                "message": "Invalid color."
-            }
-        )
-
-        return
-
+        return jsonify({
+            "success": False,
+            "message": "Invalid color."
+        }), 400
 
     if not (
-        0 <= x < room.grid_size
-        and 0 <= y < room.grid_size
+        0 <= x < room.width
+        and
+        0 <= y < room.height
     ):
 
-        emit(
-            "canvas_error",
-            {
-                "message": "Pixel is outside the canvas."
-            }
-        )
-
-        return
-
-
-    now = time.time()
-
-
-    user_key = (
-        room_code,
-        current_user.id
-    )
-
-
-    last_timestamp = pixel_timestamps.get(
-        user_key
-    )
-
-
-    if last_timestamp is not None:
-
-        elapsed = (
-            now - last_timestamp
-        )
-
-
-        if elapsed < PIXEL_COOLDOWN:
-
-            remaining = int(
-                PIXEL_COOLDOWN
-                - elapsed
-            ) + 1
-
-
-            emit(
-                "pixel_cooldown",
-                {
-                    "remaining":
-                        remaining
-                }
+        return jsonify({
+            "success": False,
+            "message": (
+                "Pixel is outside "
+                "the canvas."
             )
+        }), 400
 
-            return
+    pixel = Pixel.query.filter_by(
+        room_id=room.id,
+        x=x,
+        y=y
+    ).first()
 
+    if pixel:
 
-    pixel_timestamps[
-        user_key
-    ] = now
+        pixel.color = color
 
+        pixel.user_id = current_user.id
 
-    canvas = get_room_canvas(
-        room
-    )
+        pixel.updated_at = datetime.utcnow()
 
+    else:
 
-    found = False
+        pixel = Pixel(
+            room_id=room.id,
+            x=x,
+            y=y,
+            color=color,
+            user_id=current_user.id
+        )
 
-
-    for pixel in canvas["pixels"]:
-
-        if (
-            pixel["x"] == x
-            and pixel["y"] == y
-        ):
-
-            pixel["color"] = color
-            found = True
-            break
-
-
-    if not found:
-
-        canvas["pixels"].append({
-            "x": x,
-            "y": y,
-            "color": color
-        })
-
-
-    room.canvas = json.dumps(
-        canvas
-    )
-
+        db.session.add(pixel)
 
     db.session.commit()
 
+    return jsonify({
+        "success": True,
+        "x": x,
+        "y": y,
+        "color": color,
+        "username": current_user.username
+    })
 
-    emit(
-        "pixel_updated",
-        {
-            "x": x,
-            "y": y,
-            "color": color,
-            "username":
-                current_user.username
-        },
-        to=room_code
+
+# =========================================================
+# LEAVE ROOM
+# =========================================================
+
+@multiplayer_bp.route(
+    "/api/<room_code>/leave",
+    methods=["POST"]
+)
+@login_required
+def api_leave_room(room_code):
+
+    room = Room.query.filter_by(
+        room_code=room_code.upper()
+    ).first()
+
+    if room is None:
+
+        return jsonify({
+            "success": False
+        }), 404
+
+    player = get_current_player(
+        room
     )
 
+    if player:
 
+        db.session.delete(player)
 
-@socketio.on("leave_canvas")
-def handle_leave_canvas(data):
+        db.session.commit()
 
-    if not current_user.is_authenticated:
-
-        return
-
-
-    room_code = str(
-        data.get(
-            "room_code",
-            ""
-        )
-    ).upper()
-
-
-    leave_room(
-        room_code
-    )
-
-
-    if room_code in active_players:
-
-        active_players[
-            room_code
-        ].discard(
-            current_user.id
-        )
-
-
-        if not active_players[
-            room_code
-        ]:
-
-            del active_players[
-                room_code
-            ]
-
-
-    emit(
-        "player_count",
-        {
-            "count": len(
-                active_players.get(
-                    room_code,
-                    set()
-                )
-            )
-        },
-        to=room_code
-    )
+    return jsonify({
+        "success": True,
+        "players": get_player_count(room),
+        "max_players": MAX_PLAYERS
+    })

@@ -61,17 +61,22 @@ class Room(db.Model):
         cascade="all, delete-orphan"
     )
 
+    players = db.relationship(
+        "RoomPlayer",
+        back_populates="room",
+        cascade="all, delete-orphan"
+    )
+
     def to_dict(self):
 
         return {
             "id": self.id,
-            "room_code":
-                self.room_code,
+            "room_code": self.room_code,
             "name": self.name,
             "width": self.width,
             "height": self.height,
-            "created_by":
-                self.created_by,
-            "created_at":
+            "created_by": self.created_by,
+            "created_at": (
                 self.created_at.isoformat()
+            )
         }

@@ -4,6 +4,7 @@
 Multiplayer Pixel Canvas — PixelForge
 {% endblock %}
 
+
 {% block content %}
 
 <section class="multiplayer-container">
@@ -25,6 +26,7 @@ Multiplayer Pixel Canvas — PixelForge
             </p>
 
         </div>
+
 
         <div class="room-info">
 
@@ -53,7 +55,10 @@ Multiplayer Pixel Canvas — PixelForge
 
         <div class="status-item">
 
-            <span class="status-dot" id="status-dot"></span>
+            <span
+                class="status-dot"
+                id="status-dot"
+            ></span>
 
             <span id="connection-status">
                 Connecting...
@@ -69,33 +74,7 @@ Multiplayer Pixel Canvas — PixelForge
             </span>
 
             <strong id="online-users">
-                1
-            </strong>
-
-        </div>
-
-
-        <div class="status-item">
-
-            <span>
-                Pixels left
-            </span>
-
-            <strong id="pixel-counter">
-                100
-            </strong>
-
-        </div>
-
-
-        <div class="status-item">
-
-            <span>
-                Next pixel
-            </span>
-
-            <strong id="pixel-timer">
-                Ready
+                0/3
             </strong>
 
         </div>
@@ -153,17 +132,15 @@ Multiplayer Pixel Canvas — PixelForge
                     </li>
 
                     <li>
-                        Your pixels appear instantly for
-                        other players.
+                        Up to 3 players can paint together.
                     </li>
 
                     <li>
-                        You have a limited number of pixels.
+                        Everyone can paint unlimited pixels.
                     </li>
 
                     <li>
-                        A pixel becomes available again
-                        after the cooldown.
+                        Changes automatically appear for everyone.
                     </li>
 
                 </ul>
@@ -205,7 +182,9 @@ Multiplayer Pixel Canvas — PixelForge
             </div>
 
 
-            <div class="canvas-wrapper multiplayer-canvas-wrapper">
+            <div
+                class="canvas-wrapper multiplayer-canvas-wrapper"
+            >
 
                 <canvas
                     id="multiplayer-canvas"
@@ -225,10 +204,6 @@ Multiplayer Pixel Canvas — PixelForge
 
 
 {% block scripts %}
-
-<script
-    src="https://cdn.socket.io/4.8.1/socket.io.min.js"
-></script>
 
 <script
     src="{{ url_for('static', filename='js/editor.js') }}"

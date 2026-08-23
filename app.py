@@ -4,8 +4,7 @@ from config import Config
 
 from extensions import (
     db,
-    login_manager,
-    socketio
+    login_manager
 )
 
 from models import User
@@ -22,23 +21,40 @@ def create_app():
 
     app = Flask(__name__)
 
-    app.config.from_object(Config)
+    app.config.from_object(
+        Config
+    )
+
+    # -----------------------------------------
+    # DATABASE
+    # -----------------------------------------
 
     db.init_app(app)
 
-    login_manager.init_app(app)
+    # -----------------------------------------
+    # LOGIN
+    # -----------------------------------------
 
-    socketio.init_app(
-        app,
-        cors_allowed_origins="*"
+    login_manager.init_app(
+        app
     )
 
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = (
+        "auth.login"
+    )
+
+    # -----------------------------------------
+    # MIGRATIONS
+    # -----------------------------------------
 
     Migrate(
         app,
         db
     )
+
+    # -----------------------------------------
+    # BLUEPRINTS
+    # -----------------------------------------
 
     app.register_blueprint(
         auth_bp
@@ -56,16 +72,33 @@ def create_app():
         multiplayer_bp
     )
 
+    # -----------------------------------------
+    # CREATE NEW TABLES
+    # -----------------------------------------
+
+    with app.app_context():
+
+        db.create_all()
+
     return app
 
 
 @login_manager.user_loader
 def load_user(user_id):
 
-    return db.session.get(
-        User,
-        int(user_id)
-    )
+    try:
+
+        return db.session.get(
+            User,
+            int(user_id)
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        return None
 
 
 app = create_app()
@@ -73,8 +106,7 @@ app = create_app()
 
 if __name__ == "__main__":
 
-    socketio.run(
-        app,
+    app.run(
         host="0.0.0.0",
         port=5000,
         debug=True

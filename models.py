@@ -48,10 +48,6 @@ class User(
         lazy=True
     )
 
-    # -------------------------
-    # PASSWORD FUNCTIONS
-    # -------------------------
-
     def set_password(self, password):
 
         self.password = generate_password_hash(
@@ -137,4 +133,42 @@ class Room(db.Model):
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
+    )
+
+
+class RoomPlayer(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    room_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "room.id"
+        ),
+        nullable=False
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "user.id"
+        ),
+        nullable=False
+    )
+
+    last_seen = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint(
+            "room_id",
+            "user_id",
+            name="unique_room_player"
+        ),
     )

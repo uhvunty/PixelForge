@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -10,11 +12,13 @@
 
     <meta
         name="description"
-        content="PixelForge - Create, convert and paint pixel art."
+        content="PixelForge - Create, convert and play with pixel art."
     >
 
     <title>
-        {% block title %}PixelForge{% endblock %}
+        {% block title %}
+        PixelForge
+        {% endblock %}
     </title>
 
     <link
@@ -28,173 +32,264 @@
     >
 
     {% block head %}{% endblock %}
+
 </head>
+
 
 <body>
 
-<nav class="navbar">
+    <!-- Decorative background shapes -->
 
-    <div class="navbar-inner">
-
-        <!-- BRAND -->
-        <a
-            href="{{ url_for('main.index') }}"
-            class="navbar-brand"
-            aria-label="PixelForge home"
-        >
-            <span class="brand-mark">P</span>
-            <span class="brand-name">PixelForge</span>
-        </a>
+    <div class="background-decoration decoration-one"></div>
+    <div class="background-decoration decoration-two"></div>
+    <div class="background-decoration decoration-three"></div>
 
 
-        <!-- NAVIGATION -->
-        <div class="nav-links">
+    <!-- =====================================================
+         NAVBAR
+         ===================================================== -->
 
-            {% if current_user.is_authenticated %}
+    <nav class="navbar">
 
-                <a
-                    href="{{ url_for('main.dashboard') }}"
-                    class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
-                    {% if request.endpoint == 'main.dashboard' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span class="nav-icon">▦</span>
-                    <span>Dashboard</span>
-                </a>
+        <div class="navbar-inner">
 
 
-                <a
-                    href="{{ url_for('studio.studio') }}"
-                    class="nav-link {% if request.endpoint == 'studio.studio' %}active{% endif %}"
-                    {% if request.endpoint == 'studio.studio' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span class="nav-icon">✦</span>
-                    <span>Studio</span>
-                </a>
+            <!-- LOGO -->
+
+            <a
+                href="{{ url_for('main.index') }}"
+                class="navbar-brand"
+                aria-label="PixelForge home"
+            >
+
+                <span class="brand-mark">
+                    🎨
+                </span>
+
+                <span class="brand-name">
+                    PixelForge
+                </span>
+
+            </a>
 
 
-                <a
-                    href="{{ url_for('studio.convert') }}"
-                    class="nav-link {% if request.endpoint == 'studio.convert' %}active{% endif %}"
-                    {% if request.endpoint == 'studio.convert' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span class="nav-icon">↗</span>
-                    <span>Convert</span>
-                </a>
+            <!-- NAVIGATION -->
+
+            <div class="navbar-links">
+
+                {% if current_user.is_authenticated %}
 
 
-                <a
-                    href="{{ url_for('multiplayer.multiplayer') }}"
-                    class="nav-link {% if request.endpoint == 'multiplayer.multiplayer' %}active{% endif %}"
-                    {% if request.endpoint == 'multiplayer.multiplayer' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span class="nav-icon">♟</span>
-                    <span>Multiplayer</span>
-                </a>
-
-
-                <a
-                    href="{{ url_for('main.profile') }}"
-                    class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %}"
-                    {% if request.endpoint == 'main.profile' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span class="nav-icon">●</span>
-                    <span>Profile</span>
-                </a>
-
-
-                <a
-                    href="{{ url_for('auth.logout') }}"
-                    class="nav-link nav-link-logout"
-                >
-                    <span class="nav-icon">↪</span>
-                    <span>Logout</span>
-                </a>
-
-            {% else %}
-
-                <a
-                    href="{{ url_for('auth.login') }}"
-                    class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}"
-                    {% if request.endpoint == 'auth.login' %}
-                        aria-current="page"
-                    {% endif %}
-                >
-                    <span>Login</span>
-                </a>
-
-
-                <a
-                    href="{{ url_for('auth.register') }}"
-                    class="nav-link nav-link-primary"
-                >
-                    <span>Register</span>
-                </a>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-</nav>
-
-
-<main class="page-content">
-
-    {% with messages = get_flashed_messages(
-        with_categories=true
-    ) %}
-
-        {% if messages %}
-
-            <div class="flash-container">
-
-                {% for category, message in messages %}
-
-                    <div
-                        class="flash-message {{ category }}"
+                    <a
+                        href="{{ url_for('main.dashboard') }}"
+                        class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"
                     >
-                        {{ message }}
-                    </div>
 
-                {% endfor %}
+                        <span class="nav-icon">
+                            🏠
+                        </span>
+
+                        <span>
+                            Dashboard
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('studio.studio') }}"
+                        class="nav-link {% if request.endpoint == 'studio.studio' %}active{% endif %}"
+                    >
+
+                        <span class="nav-icon">
+                            🎨
+                        </span>
+
+                        <span>
+                            Studio
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('studio.convert') }}"
+                        class="nav-link {% if request.endpoint == 'studio.convert' %}active{% endif %}"
+                    >
+
+                        <span class="nav-icon">
+                            ✨
+                        </span>
+
+                        <span>
+                            Convert
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('multiplayer.multiplayer') }}"
+                        class="nav-link {% if request.endpoint == 'multiplayer.multiplayer' %}active{% endif %}"
+                    >
+
+                        <span class="nav-icon">
+                            🎮
+                        </span>
+
+                        <span>
+                            Multiplayer
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('main.profile') }}"
+                        class="nav-link {% if request.endpoint == 'main.profile' %}active{% endif %}"
+                    >
+
+                        <span class="nav-icon">
+                            😊
+                        </span>
+
+                        <span>
+                            Profile
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('auth.logout') }}"
+                        class="nav-link nav-link-logout"
+                    >
+
+                        <span class="nav-icon">
+                            👋
+                        </span>
+
+                        <span>
+                            Logout
+                        </span>
+
+                    </a>
+
+
+                {% else %}
+
+
+                    <a
+                        href="{{ url_for('auth.login') }}"
+                        class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}"
+                    >
+
+                        <span class="nav-icon">
+                            🔑
+                        </span>
+
+                        <span>
+                            Login
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('auth.register') }}"
+                        class="nav-link nav-link-primary"
+                    >
+
+                        <span class="nav-icon">
+                            🚀
+                        </span>
+
+                        <span>
+                            Register
+                        </span>
+
+                    </a>
+
+
+                {% endif %}
 
             </div>
 
-        {% endif %}
+        </div>
 
-    {% endwith %}
-
-
-    {% block content %}{% endblock %}
-
-</main>
+    </nav>
 
 
-<footer class="footer">
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
 
-    <p>
-        PixelForge
-    </p>
-
-    <p>
-        Create. Paint. Play.
-    </p>
-
-</footer>
+    <main class="page-content">
 
 
-{% block scripts %}{% endblock %}
+        {% with messages = get_flashed_messages(
+            with_categories=true
+        ) %}
+
+            {% if messages %}
+
+                <div class="flash-container">
+
+                    {% for category, message in messages %}
+
+                        <div
+                            class="flash-message {{ category }}"
+                        >
+
+                            <span class="flash-icon">
+                                ✨
+                            </span>
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        {% block content %}{% endblock %}
+
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-sparkles">
+            ✦　✧　✦
+        </div>
+
+        <p>
+            🎨 PixelForge
+        </p>
+
+        <p>
+            Create. Paint. Play. ✨
+        </p>
+
+    </footer>
+
+
+    {% block scripts %}{% endblock %}
+
 
 </body>
+
 </html>

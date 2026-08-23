@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}
+PixelForge — Pixel Art Studio
+{% endblock %}
+
+
+{% block content %}
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="hero-label">
+            PIXEL ART CREATION PLATFORM
+        </span>
+
+        <h1>
+            Turn ideas into
+            <span>pixel art.</span>
+        </h1>
+
+        <p>
+            Create pixel art from scratch, convert your
+            favorite images, or collaborate with other
+            artists on a shared canvas in real time.
+        </p>
+
+        <div class="hero-actions">
+
+            {% if current_user.is_authenticated %}
+
+                <a
+                    href="{{ url_for('studio.studio') }}"
+                    class="button primary"
+                >
+                    Open Studio
+                </a>
+
+                <a
+                    href="{{ url_for('multiplayer.multiplayer') }}"
+                    class="button secondary"
+                >
+                    Multiplayer
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('auth.register') }}"
+                    class="button primary"
+                >
+                    Start Creating
+                </a>
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="button secondary"
+                >
+                    Login
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-art">
+
+        <div class="pixel-art-preview">
+
+            <div class="pixel pixel-1"></div>
+            <div class="pixel pixel-2"></div>
+            <div class="pixel pixel-3"></div>
+            <div class="pixel pixel-4"></div>
+            <div class="pixel pixel-5"></div>
+            <div class="pixel pixel-6"></div>
+            <div class="pixel pixel-7"></div>
+            <div class="pixel pixel-8"></div>
+            <div class="pixel pixel-9"></div>
+            <div class="pixel pixel-10"></div>
+            <div class="pixel pixel-11"></div>
+            <div class="pixel pixel-12"></div>
+            <div class="pixel pixel-13"></div>
+            <div class="pixel pixel-14"></div>
+            <div class="pixel pixel-15"></div>
+            <div class="pixel pixel-16"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <span>
+            WHAT YOU CAN DO
+        </span>
+
+        <h2>
+            One platform.
+            Multiple ways to create.
+        </h2>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                ✦
+            </div>
+
+            <h3>
+                Pixel Studio
+            </h3>
+
+            <p>
+                Draw your own pixel art on a customizable
+                pixel canvas.
+            </p>
+
+            <a href="{{ url_for('studio.studio') }}">
+                Open Studio →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                ◈
+            </div>
+
+            <h3>
+                Image Converter
+            </h3>
+
+            <p>
+                Upload an image and transform it into
+                pixel art automatically.
+            </p>
+
+            <a href="{{ url_for('studio.convert') }}">
+                Convert Image →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-icon">
+                ◎
+            </div>
+
+            <h3>
+                Multiplayer Canvas
+            </h3>
+
+            <p>
+                Join a shared canvas and paint alongside
+                other people in real time.
+            </p>
+
+            <a href="{{ url_for('multiplayer.multiplayer') }}">
+                Start Painting →
+            </a>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<section class="technology-section">
+
+    <div>
+
+        <span class="section-label">
+            BUILT FOR THE WEB
+        </span>
+
+        <h2>
+            Create. Collaborate.
+            Experiment.
+        </h2>
+
+        <p>
+            PixelForge combines image processing,
+            interactive canvas rendering, persistent
+            storage and real-time multiplayer technology
+            into one project.
+        </p>
+
+    </div>
+
+    <div class="technology-list">
+
+        <span>Python</span>
+        <span>Flask</span>
+        <span>OpenCV</span>
+        <span>Redis</span>
+        <span>WebSockets</span>
+        <span>JavaScript</span>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}
+Your Pixel Art — PixelForge
+{% endblock %}
+
+{% block content %}
+
+<section class="pixel-result-container">
+
+    <div class="pixel-result-header">
+
+        <div>
+
+            <span class="section-label">
+                GENERATED PIXEL ART
+            </span>
+
+            <h1>
+                Your artwork is ready
+            </h1>
+
+            <p>
+                Make any final changes before saving or
+                downloading your artwork.
+            </p>
+
+        </div>
+
+        <a
+            href="{{ url_for('studio.convert') }}"
+            class="button secondary"
+        >
+            Convert Another
+        </a>
+
+    </div>
+
+
+    <div class="pixel-result-layout">
+
+        <div class="pixel-result-canvas-area">
+
+            <div class="canvas-toolbar">
+
+                <span>
+                    PIXEL CANVAS
+                </span>
+
+                <span>
+                    {{ pixel_data.width }}
+                    ×
+                    {{ pixel_data.height }}
+                </span>
+
+            </div>
+
+
+            <div class="canvas-wrapper">
+
+                <canvas
+                    id="pixel-result-canvas"
+                    width="{{ pixel_data.width }}"
+                    height="{{ pixel_data.height }}"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+
+        <aside class="pixel-result-controls">
+
+            <div class="control-group">
+
+                <label for="artwork-title">
+                    Artwork title
+                </label>
+
+                <input
+                    type="text"
+                    id="artwork-title"
+                    value="{{ title or 'My Pixel Art' }}"
+                    maxlength="100"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="pixel-color">
+                    Brush color
+                </label>
+
+                <input
+                    type="color"
+                    id="pixel-color"
+                    value="#000000"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="clear-pixel-art"
+                class="button secondary full-width"
+            >
+                Clear
+            </button>
+
+
+            <button
+                type="button"
+                id="download-pixel-art"
+                class="button secondary full-width"
+            >
+                Download PNG
+            </button>
+
+
+            <button
+                type="button"
+                id="save-pixel-art"
+                class="button primary full-width"
+            >
+                Save Artwork
+            </button>
+
+
+            <div
+                id="pixel-message"
+                class="pixel-message"
+            ></div>
+
+
+            <div class="studio-tip">
+
+                <strong>
+                    Continue editing
+                </strong>
+
+                <p>
+                    Click or drag across the canvas to
+                    modify individual pixels.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <script
+        type="application/json"
+        id="pixel-data"
+    >{{ pixel_data|tojson }}</script>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{{ url_for('static', filename='js/editor.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/pixel-result.js') }}"
+></script>
+
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile — PixelForge
+{% endblock %}
+
+
+{% block content %}
+
+<section class="profile-page">
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+
+            {{ current_user.username[0]|upper }}
+
+        </div>
+
+
+        <div class="profile-info">
+
+            <span class="section-label">
+                PROFILE
+            </span>
+
+            <h1>
+                {{ current_user.username }}
+            </h1>
+
+            <p>
+                {{ current_user.email }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="profile-stats">
+
+        <div class="stat-card">
+
+            <span>
+                ARTWORKS
+            </span>
+
+            <strong>
+                {{ artwork_count }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                ACCOUNT
+            </span>
+
+            <strong>
+                Active
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                PIXELFORGE
+            </span>
+
+            <strong>
+                Creator
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                CREATE
+            </span>
+
+            <h2>
+                Start something new
+            </h2>
+
+        </div>
+
+
+        <div class="profile-actions">
+
+            <a
+                href="{{ url_for('studio.studio') }}"
+                class="profile-action-card"
+            >
+
+                <strong>
+                    Pixel Studio
+                </strong>
+
+                <span>
+                    Build pixel art from an empty canvas.
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('studio.convert') }}"
+                class="profile-action-card"
+            >
+
+                <strong>
+                    Image Converter
+                </strong>
+
+                <span>
+                    Transform an image into pixel art.
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for('multiplayer.multiplayer') }}"
+                class="profile-action-card"
+            >
+
+                <strong>
+                    Multiplayer
+                </strong>
+
+                <span>
+                    Join a live collaborative canvas.
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+</section>
+
+{% endblock %}

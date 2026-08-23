@@ -1,0 +1,177 @@
+@media (max-width: 1000px) {
+
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 60px 0;
+    }
+
+    .hero-image {
+        max-width: 600px;
+        width: 100%;
+        margin: auto;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .artwork-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .studio-layout,
+    .pixel-result-layout,
+    .multiplayer-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .studio-controls,
+    .pixel-result-controls,
+    .multiplayer-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+
+    .studio-tool-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .studio-tool-buttons .full-width {
+        width: 100%;
+    }
+
+    .studio-tip,
+    .multiplayer-rules,
+    .multiplayer-share {
+        grid-column: 1 / -1;
+    }
+
+    .converter-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .canvas-wrapper {
+        min-height: 450px;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .navbar-inner {
+        min-height: auto;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px 14px;
+    }
+
+    .page-container,
+    .studio-page,
+    .converter-page,
+    .pixel-result-container,
+    .multiplayer-container,
+    .hero {
+        width: min(100% - 28px, 1250px);
+    }
+
+    .hero {
+        padding: 45px 0;
+    }
+
+    h1 {
+        font-size: 38px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-header,
+    .studio-header,
+    .converter-header,
+    .pixel-result-header,
+    .multiplayer-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .artwork-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .studio-controls,
+    .pixel-result-controls,
+    .multiplayer-controls {
+        display: flex;
+    }
+
+    .studio-tool-buttons {
+        display: flex;
+    }
+
+    .converter-options {
+        grid-template-columns: 1fr;
+    }
+
+    .studio-canvas-area,
+    .pixel-result-canvas-area,
+    .multiplayer-canvas-area {
+        padding: 10px;
+    }
+
+    .canvas-wrapper {
+        min-height: 320px;
+        padding: 10px;
+    }
+
+    .multiplayer-status-bar {
+        gap: 12px;
+    }
+
+    .auth-card,
+    .room-card {
+        padding: 25px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .navbar-inner {
+        flex-direction: column;
+    }
+
+    .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .hero-buttons .button {
+        width: 100%;
+    }
+
+    .artwork-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .room-info {
+        width: 100%;
+    }
+
+}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Multiplayer Room — PixelForge
+{% endblock %}
+
+{% block content %}
+
+<section class="room-page">
+
+    <div class="room-card">
+
+        <div class="room-header">
+
+            <span class="section-label">
+                MULTIPLAYER
+            </span>
+
+            <h1>
+                Create a room
+            </h1>
+
+            <p>
+                Start a shared pixel canvas and invite
+                other people to paint with you.
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('multiplayer.create_room') }}"
+            class="room-form"
+        >
+
+            <div class="form-group">
+
+                <label for="room_name">
+                    Room name
+                </label>
+
+                <input
+                    type="text"
+                    id="room_name"
+                    name="room_name"
+                    placeholder="My Pixel World"
+                    maxlength="80"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="grid_size">
+                    Canvas size
+                </label>
+
+                <select
+                    id="grid_size"
+                    name="grid_size"
+                >
+
+                    <option value="32">
+                        32 × 32
+                    </option>
+
+                    <option
+                        value="64"
+                        selected
+                    >
+                        64 × 64
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="room-settings">
+
+                <div class="room-setting">
+
+                    <strong>
+                        Shared canvas
+                    </strong>
+
+                    <span>
+                        Everyone paints on the same board.
+                    </span>
+
+                </div>
+
+
+                <div class="room-setting">
+
+                    <strong>
+                        Pixel limit
+                    </strong>
+
+                    <span>
+                        Each player receives a limited number
+                        of pixels.
+                    </span>
+
+                </div>
+
+
+                <div class="room-setting">
+
+                    <strong>
+                        Real-time updates
+                    </strong>
+
+                    <span>
+                        Changes appear immediately for everyone.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="button primary full-width"
+            >
+                Create Room
+            </button>
+
+        </form>
+
+
+        <div class="room-footer">
+
+            <a
+                href="{{ url_for('multiplayer.join_room') }}"
+            >
+                Have a room code? Join a room →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

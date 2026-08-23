@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard — PixelForge
+{% endblock %}
+
+
+{% block content %}
+
+<section class="dashboard-page">
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <span class="section-label">
+                YOUR WORKSPACE
+            </span>
+
+            <h1>
+                Welcome,
+                {{ current_user.username }}
+            </h1>
+
+            <p>
+                Continue creating or start something new.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-actions">
+
+            <a
+                href="{{ url_for('studio.studio') }}"
+                class="button primary"
+            >
+                New Artwork
+            </a>
+
+            <a
+                href="{{ url_for('studio.convert') }}"
+                class="button secondary"
+            >
+                Convert Image
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <span>
+                ARTWORKS
+            </span>
+
+            <strong>
+                {{ artworks|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                MODE
+            </span>
+
+            <strong>
+                Creative
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                MULTIPLAYER
+            </span>
+
+            <strong>
+                Live
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <section class="dashboard-section">
+
+        <div class="section-heading-inline">
+
+            <div>
+
+                <span class="section-label">
+                    YOUR COLLECTION
+                </span>
+
+                <h2>
+                    Recent Artwork
+                </h2>
+
+            </div>
+
+            <a
+                href="{{ url_for('studio.studio') }}"
+                class="text-link"
+            >
+                Create new →
+            </a>
+
+        </div>
+
+
+        {% if artworks %}
+
+            <div class="artwork-grid">
+
+                {% for artwork in artworks %}
+
+                    <article class="artwork-card">
+
+                        <div class="artwork-preview">
+
+                            <canvas
+                                class="saved-artwork-canvas"
+                                data-pixels='{{ artwork.pixel_data | e }}'
+                            ></canvas>
+
+                        </div>
+
+
+                        <div class="artwork-info">
+
+                            <h3>
+                                {{ artwork.title }}
+                            </h3>
+
+                            <p>
+                                {{ artwork.width }}
+                                ×
+                                {{ artwork.height }}
+                            </p>
+
+                            <small>
+                                {{ artwork.created_at.strftime(
+                                    "%d %b %Y"
+                                ) }}
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    +
+                </div>
+
+                <h3>
+                    No artwork yet
+                </h3>
+
+                <p>
+                    Create your first pixel artwork
+                    and it will appear here.
+                </p>
+
+                <a
+                    href="{{ url_for('studio.studio') }}"
+                    class="button primary"
+                >
+                    Create Artwork
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="quick-actions">
+
+        <a
+            href="{{ url_for('studio.studio') }}"
+            class="quick-action"
+        >
+            <strong>
+                Pixel Studio
+            </strong>
+
+            <span>
+                Draw from scratch →
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('studio.convert') }}"
+            class="quick-action"
+        >
+            <strong>
+                Image Converter
+            </strong>
+
+            <span>
+                Turn images into pixel art →
+            </span>
+        </a>
+
+
+        <a
+            href="{{ url_for('multiplayer.multiplayer') }}"
+            class="quick-action"
+        >
+            <strong>
+                Multiplayer
+            </strong>
+
+            <span>
+                Paint together →
+            </span>
+        </a>
+
+    </section>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const canvases =
+            document.querySelectorAll(
+                ".saved-artwork-canvas"
+            );
+
+
+        canvases.forEach(
+            (canvas) => {
+
+                let data;
+
+
+                /*
+                 * Read saved artwork data.
+                 */
+
+                try {
+
+                    data =
+                        JSON.parse(
+                            canvas.dataset.pixels
+                        );
+
+                } catch (error) {
+
+                    console.error(
+                        "Could not load artwork:",
+                        error
+                    );
+
+                    return;
+                }
+
+
+                const width =
+                    Number(data.width);
+
+
+                const height =
+                    Number(data.height);
+
+
+                if (
+                    !Number.isInteger(width) ||
+                    !Number.isInteger(height) ||
+                    width <= 0 ||
+                    height <= 0
+                ) {
+
+                    console.error(
+                        "Invalid artwork dimensions."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Keep the canvas internally
+                 * at a sensible resolution.
+                 *
+                 * This makes the preview sharp
+                 * instead of stretching a tiny
+                 * 16x16/32x32 canvas.
+                 */
+
+                const previewSize = 256;
+
+
+                canvas.width =
+                    previewSize;
+
+                canvas.height =
+                    previewSize;
+
+
+                canvas.style.imageRendering =
+                    "pixelated";
+
+
+                const context =
+                    canvas.getContext(
+                        "2d"
+                    );
+
+
+                /*
+                 * Disable smoothing so
+                 * pixel art stays sharp.
+                 */
+
+                context.imageSmoothingEnabled =
+                    false;
+
+
+                /*
+                 * Clear the canvas.
+                 */
+
+                context.clearRect(
+                    0,
+                    0,
+                    previewSize,
+                    previewSize
+                );
+
+
+                /*
+                 * White background.
+                 */
+
+                context.fillStyle =
+                    "#ffffff";
+
+
+                context.fillRect(
+                    0,
+                    0,
+                    previewSize,
+                    previewSize
+                );
+
+
+                /*
+                 * Size of one visible pixel.
+                 */
+
+                const pixelWidth =
+                    previewSize / width;
+
+
+                const pixelHeight =
+                    previewSize / height;
+
+
+                /*
+                 * Draw saved pixels.
+                 */
+
+                if (
+                    Array.isArray(
+                        data.pixels
+                    )
+                ) {
+
+                    data.pixels.forEach(
+                        (pixel) => {
+
+                            const x =
+                                Number(pixel.x);
+
+
+                            const y =
+                                Number(pixel.y);
+
+
+                            const color =
+                                pixel.color;
+
+
+                            if (
+                                !Number.isFinite(x) ||
+                                !Number.isFinite(y) ||
+                                !color
+                            ) {
+                                return;
+                            }
+
+
+                            if (
+                                x < 0 ||
+                                x >= width ||
+                                y < 0 ||
+                                y >= height
+                            ) {
+                                return;
+                            }
+
+
+                            context.fillStyle =
+                                color;
+
+
+                            context.fillRect(
+                                x * pixelWidth,
+                                y * pixelHeight,
+                                pixelWidth + 0.5,
+                                pixelHeight + 0.5
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

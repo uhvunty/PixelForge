@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}
+Image to Pixel Art — PixelForge
+{% endblock %}
+
+{% block content %}
+
+<section class="converter-page">
+
+    <div class="converter-header">
+
+        <span class="section-label">
+            IMAGE CONVERTER
+        </span>
+
+        <h1>
+            Turn any image into pixel art
+        </h1>
+
+        <p>
+            Upload an image and PixelForge will process it
+            into a pixel-art style image.
+        </p>
+
+    </div>
+
+
+    <div class="converter-layout">
+
+        <div class="converter-card">
+
+            <form
+                id="converter-form"
+                method="POST"
+                action="{{ url_for('studio.convert') }}"
+                enctype="multipart/form-data"
+            >
+
+                <div class="upload-area">
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/png,image/jpeg,image/webp"
+                        required
+                    >
+
+                    <label
+                        for="image"
+                        class="upload-label"
+                    >
+
+                        <div class="upload-icon">
+                            ↑
+                        </div>
+
+                        <strong>
+                            Choose an image
+                        </strong>
+
+                        <span>
+                            PNG, JPG or WEBP
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div
+                    id="selected-file-name"
+                    class="selected-file"
+                >
+                    No file selected
+                </div>
+
+
+                <div class="image-preview-container">
+
+                    <img
+                        id="image-preview"
+                        src=""
+                        alt="Image preview"
+                        hidden
+                    >
+
+                </div>
+
+
+                <div class="converter-options">
+
+                    <div class="form-group">
+
+                        <label for="size">
+                            Pixel resolution
+                        </label>
+
+                        <select
+                            id="size"
+                            name="size"
+                        >
+
+                            <option value="16">
+                                16 × 16
+                            </option>
+
+                            <option
+                                value="32"
+                                selected
+                            >
+                                32 × 32
+                            </option>
+
+                            <option value="64">
+                                64 × 64
+                            </option>
+
+                            <option value="128">
+                                128 × 128
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="colors">
+                            Color palette
+                        </label>
+
+                        <select
+                            id="colors"
+                            name="colors"
+                        >
+
+                            <option value="8">
+                                8 colors
+                            </option>
+
+                            <option
+                                value="16"
+                                selected
+                            >
+                                16 colors
+                            </option>
+
+                            <option value="32">
+                                32 colors
+                            </option>
+
+                            <option value="64">
+                                64 colors
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="converter-message"
+                    class="form-message"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="button primary full-width"
+                >
+                    Generate Pixel Art
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div class="converter-info">
+
+            <div class="info-card">
+
+                <span class="section-label">
+                    HOW IT WORKS
+                </span>
+
+                <h2>
+                    From photograph to pixels
+                </h2>
+
+                <div class="process-list">
+
+                    <div class="process-item">
+
+                        <span>
+                            01
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Upload
+                            </strong>
+
+                            <p>
+                                Choose an image from your device.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="process-item">
+
+                        <span>
+                            02
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Process
+                            </strong>
+
+                            <p>
+                                The image is resized and its
+                                colors are reduced.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="process-item">
+
+                        <span>
+                            03
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Pixelate
+                            </strong>
+
+                            <p>
+                                The result is converted into
+                                a pixel-art canvas.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="process-item">
+
+                        <span>
+                            04
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Create
+                            </strong>
+
+                            <p>
+                                Edit, save and download your
+                                finished artwork.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="{{ url_for('static', filename='js/converter.js') }}"
+></script>
+
+{% endblock %}

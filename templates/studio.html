@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+
+{% block title %}
+Pixel Studio — PixelForge
+{% endblock %}
+
+
+{% block content %}
+
+<section class="studio-page">
+
+    <div class="studio-header">
+
+        <div>
+
+            <span class="section-label">
+                PIXEL STUDIO
+            </span>
+
+            <h1>
+                Create something awesome.
+            </h1>
+
+            <p>
+                Turn your ideas into pixel art,
+                one pixel at a time.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('main.dashboard') }}"
+            class="button secondary"
+        >
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="studio-layout">
+
+
+        <!-- LEFT CONTROL PANEL -->
+
+        <aside class="studio-controls">
+
+
+            <div class="control-card">
+
+                <label for="studio-title">
+                    Artwork title
+                </label>
+
+                <input
+                    type="text"
+                    id="studio-title"
+                    placeholder="My Pixel Art"
+                    maxlength="100"
+                >
+
+            </div>
+
+
+
+            <div class="control-card">
+
+                <label for="studio-grid-size">
+                    Canvas size
+                </label>
+
+                <select id="studio-grid-size">
+
+                    <option value="16">
+                        16 × 16
+                    </option>
+
+                    <option
+                        value="32"
+                        selected
+                    >
+                        32 × 32
+                    </option>
+
+                    <option value="64">
+                        64 × 64
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div class="control-card">
+
+                <label>
+                    Color
+                </label>
+
+
+                <div class="color-control">
+
+                    <input
+                        type="color"
+                        id="studio-color"
+                        value="#7c3aed"
+                    >
+
+                    <span>
+                        Choose your color
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TOOLBOX -->
+
+            <div class="control-card">
+
+                <div class="control-heading">
+
+                    <span>
+                        Tools
+                    </span>
+
+                    <small>
+                        B / E / G / I
+                    </small>
+
+                </div>
+
+
+                <div class="studio-toolbar">
+
+
+                    <button
+                        type="button"
+                        class="tool-button active"
+                        data-tool="brush"
+                        title="Brush (B)"
+                    >
+                        <span class="tool-icon">
+                            ✎
+                        </span>
+
+                        <span>
+                            Brush
+                        </span>
+                    </button>
+
+
+
+                    <button
+                        type="button"
+                        class="tool-button"
+                        data-tool="eraser"
+                        title="Eraser (E)"
+                    >
+                        <span class="tool-icon">
+                            ⌫
+                        </span>
+
+                        <span>
+                            Eraser
+                        </span>
+                    </button>
+
+
+
+                    <button
+                        type="button"
+                        class="tool-button"
+                        data-tool="fill"
+                        title="Fill (G)"
+                    >
+                        <span class="tool-icon">
+                            ◈
+                        </span>
+
+                        <span>
+                            Fill
+                        </span>
+                    </button>
+
+
+
+                    <button
+                        type="button"
+                        class="tool-button"
+                        data-tool="picker"
+                        title="Color Picker (I)"
+                    >
+                        <span class="tool-icon">
+                            ◉
+                        </span>
+
+                        <span>
+                            Picker
+                        </span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- BRUSH SIZE -->
+
+            <div class="control-card">
+
+                <div class="control-heading">
+
+                    <span>
+                        Brush size
+                    </span>
+
+                </div>
+
+
+                <div class="brush-size-buttons">
+
+
+                    <button
+                        type="button"
+                        data-brush-size="1"
+                        class="brush-size active"
+                    >
+                        1
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-brush-size="2"
+                        class="brush-size"
+                    >
+                        2
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-brush-size="3"
+                        class="brush-size"
+                    >
+                        3
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-brush-size="4"
+                        class="brush-size"
+                    >
+                        4
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- HISTORY -->
+
+            <div class="control-card">
+
+                <div class="control-heading">
+
+                    <span>
+                        History
+                    </span>
+
+                </div>
+
+
+                <div class="history-buttons">
+
+                    <button
+                        type="button"
+                        id="studio-undo"
+                        class="button secondary"
+                    >
+                        ↶ Undo
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="studio-redo"
+                        class="button secondary"
+                    >
+                        ↷ Redo
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="studio-tool-buttons">
+
+                <button
+                    type="button"
+                    id="studio-clear"
+                    class="button secondary full-width"
+                >
+                    Clear Canvas
+                </button>
+
+
+                <button
+                    type="button"
+                    id="studio-download"
+                    class="button secondary full-width"
+                >
+                    ↓ Download PNG
+                </button>
+
+
+                <button
+                    type="button"
+                    id="studio-save"
+                    class="button primary full-width"
+                >
+                    Save Artwork
+                </button>
+
+            </div>
+
+
+
+            <div
+                id="studio-message"
+                class="studio-message"
+            ></div>
+
+
+            <div class="studio-tip">
+
+                <strong>
+                    PixelForge Tip
+                </strong>
+
+                <p>
+                    Use the brush to draw, fill large
+                    areas with the bucket, or use the
+                    picker to grab a color from your art.
+                </p>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- CANVAS -->
+
+        <div class="studio-canvas-area">
+
+
+            <div class="canvas-toolbar">
+
+
+                <div class="canvas-toolbar-title">
+
+                    <span class="live-dot"></span>
+
+                    PIXEL CANVAS
+
+                </div>
+
+
+                <div class="canvas-toolbar-actions">
+
+
+                    <button
+                        type="button"
+                        id="studio-grid"
+                        class="canvas-action active"
+                        title="Toggle grid"
+                    >
+                        ⊞ Grid
+                    </button>
+
+
+                    <span
+                        id="studio-size-display"
+                        class="canvas-size"
+                    >
+                        32 × 32
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="canvas-wrapper">
+
+                <div class="canvas-glow"></div>
+
+                <canvas
+                    id="studio-canvas"
+                    width="32"
+                    height="32"
+                ></canvas>
+
+            </div>
+
+
+
+            <div class="canvas-footer">
+
+                <span>
+                    Drag to draw
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span>
+                    Ctrl + Z to undo
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span>
+                    Ctrl + Y to redo
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+
+<script
+    src="{{ url_for('static', filename='js/editor.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/studio.js') }}"
+></script>
+
+{% endblock %}

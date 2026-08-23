@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}
+Multiplayer Pixel Canvas — PixelForge
+{% endblock %}
+
+{% block content %}
+
+<section class="multiplayer-container">
+
+    <div class="multiplayer-header">
+
+        <div>
+
+            <span class="section-label">
+                LIVE COLLABORATION
+            </span>
+
+            <h1>
+                Multiplayer Pixel Canvas
+            </h1>
+
+            <p>
+                Paint together with other people in real time.
+            </p>
+
+        </div>
+
+        <div class="room-info">
+
+            <span>
+                ROOM
+            </span>
+
+            <strong id="room-code">
+                {{ room_code }}
+            </strong>
+
+            <button
+                type="button"
+                id="copy-room-code"
+                class="copy-button"
+            >
+                Copy
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="multiplayer-status-bar">
+
+        <div class="status-item">
+
+            <span class="status-dot" id="status-dot"></span>
+
+            <span id="connection-status">
+                Connecting...
+            </span>
+
+        </div>
+
+
+        <div class="status-item">
+
+            <span>
+                Players
+            </span>
+
+            <strong id="online-users">
+                1
+            </strong>
+
+        </div>
+
+
+        <div class="status-item">
+
+            <span>
+                Pixels left
+            </span>
+
+            <strong id="pixel-counter">
+                100
+            </strong>
+
+        </div>
+
+
+        <div class="status-item">
+
+            <span>
+                Next pixel
+            </span>
+
+            <strong id="pixel-timer">
+                Ready
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="multiplayer-layout">
+
+        <aside class="multiplayer-controls">
+
+            <div class="control-group">
+
+                <label for="multiplayer-color">
+                    Paint color
+                </label>
+
+                <input
+                    type="color"
+                    id="multiplayer-color"
+                    value="#000000"
+                >
+
+            </div>
+
+
+            <div class="multiplayer-room-actions">
+
+                <a
+                    href="{{ url_for('multiplayer.multiplayer') }}"
+                    class="button secondary full-width"
+                >
+                    Leave Room
+                </a>
+
+            </div>
+
+
+            <div
+                id="multiplayer-message"
+                class="multiplayer-message"
+            ></div>
+
+
+            <div class="multiplayer-rules">
+
+                <h3>
+                    How it works
+                </h3>
+
+                <ul>
+
+                    <li>
+                        Everyone shares the same canvas.
+                    </li>
+
+                    <li>
+                        Your pixels appear instantly for
+                        other players.
+                    </li>
+
+                    <li>
+                        You have a limited number of pixels.
+                    </li>
+
+                    <li>
+                        A pixel becomes available again
+                        after the cooldown.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="multiplayer-share">
+
+                <strong>
+                    Invite friends
+                </strong>
+
+                <p>
+                    Send them this room code:
+                </p>
+
+                <div class="share-code">
+                    {{ room_code }}
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <div class="multiplayer-canvas-area">
+
+            <div class="canvas-toolbar">
+
+                <span>
+                    SHARED CANVAS
+                </span>
+
+                <span>
+                    {{ grid_size }} × {{ grid_size }}
+                </span>
+
+            </div>
+
+
+            <div class="canvas-wrapper multiplayer-canvas-wrapper">
+
+                <canvas
+                    id="multiplayer-canvas"
+                    width="{{ grid_size }}"
+                    height="{{ grid_size }}"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script
+    src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/editor.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/multiplayer.js') }}"
+></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const copyButton =
+            document.querySelector(
+                "#copy-room-code"
+            );
+
+        const roomCode =
+            document.querySelector(
+                "#room-code"
+            );
+
+        if (
+            copyButton &&
+            roomCode
+        ) {
+
+            copyButton.addEventListener(
+                "click",
+                async () => {
+
+                    const code =
+                        roomCode.textContent.trim();
+
+                    try {
+
+                        await navigator.clipboard.writeText(
+                            code
+                        );
+
+                        copyButton.textContent =
+                            "Copied!";
+
+                        setTimeout(
+                            () => {
+
+                                copyButton.textContent =
+                                    "Copy";
+
+                            },
+                            1500
+                        );
+
+                    } catch (error) {
+
+                        const textarea =
+                            document.createElement(
+                                "textarea"
+                            );
+
+                        textarea.value =
+                            code;
+
+                        document.body.appendChild(
+                            textarea
+                        );
+
+                        textarea.select();
+
+                        document.execCommand(
+                            "copy"
+                        );
+
+                        textarea.remove();
+
+                        copyButton.textContent =
+                            "Copied!";
+
+                        setTimeout(
+                            () => {
+
+                                copyButton.textContent =
+                                    "Copy";
+
+                            },
+                            1500
+                        );
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Migrate
+Flask-SocketIO
+eventlet
+redis
+python-dotenv
+Werkzeug
+opencv-python-headless
+Pillow
+numpy
+psycopg2-binary
+gunicorn

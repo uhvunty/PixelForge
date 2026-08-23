@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}
+Join Multiplayer Room — PixelForge
+{% endblock %}
+
+{% block content %}
+
+<section class="room-page">
+
+    <div class="room-card">
+
+        <div class="room-header">
+
+            <span class="section-label">
+                MULTIPLAYER
+            </span>
+
+            <h1>
+                Join a room
+            </h1>
+
+            <p>
+                Enter a room code to join an existing
+                pixel-art canvas.
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('multiplayer.join_room') }}"
+            class="room-form"
+        >
+
+            <div class="form-group">
+
+                <label for="room_code">
+                    Room code
+                </label>
+
+                <input
+                    type="text"
+                    id="room_code"
+                    name="room_code"
+                    placeholder="Enter room code"
+                    maxlength="12"
+                    autocomplete="off"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="button primary full-width"
+            >
+                Join Room
+            </button>
+
+        </form>
+
+
+        <div class="room-footer">
+
+            <p>
+                Don't have a room?
+            </p>
+
+            <a
+                href="{{ url_for('multiplayer.create_room') }}"
+            >
+                Create your own room →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

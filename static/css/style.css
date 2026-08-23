@@ -162,103 +162,289 @@ img {
    ========================================================= */
 
 .navbar {
-    width: 100%;
-
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
 
-    background: rgba(255, 249, 244, 0.92);
+    width: 100%;
 
-    border-bottom:
-        2px solid var(--border);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(18, 12, 35, 0.97),
+            rgba(25, 12, 45, 0.97)
+        );
 
-    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.18);
 }
 
 
-.navbar-inner {
-    max-width: 1250px;
-    min-height: 72px;
+/* MAIN NAVBAR CONTAINER */
 
-    margin: auto;
-    padding: 0 24px;
+.navbar-inner {
+    width: min(1400px, calc(100% - 40px));
+    min-height: 82px;
+
+    margin: 0 auto;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 25px;
+    gap: 28px;
 }
 
 
-.logo-area {
-    display: flex;
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.navbar-brand {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+
+    gap: 11px;
 
     flex-shrink: 0;
-}
 
+    color: #ffffff;
 
-.logo-area img {
-    width: 40px;
-    height: 40px;
-
-    object-fit: cover;
-
-    image-rendering: pixelated;
-
-    border-radius: 12px;
-
-    box-shadow:
-        3px 4px 0 #d8c7f7;
-}
-
-
-.logo-area h2 {
     font-size: 21px;
+    font-weight: 800;
+
+    letter-spacing: -0.02em;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.navbar-brand:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9b5cff,
+            #ff3fa4
+        );
+
+    color: white;
+
+    font-size: 18px;
     font-weight: 900;
 
-    letter-spacing: -0.04em;
-
-    color: var(--purple);
+    box-shadow:
+        0 6px 18px rgba(174, 76, 255, 0.30);
 }
 
+
+.brand-name {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NAVIGATION BUTTONS
+   ========================================================= */
 
 .nav-links {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
 
-    gap: 5px;
+    gap: 8px;
+
+    flex-wrap: wrap;
 }
 
 
-.nav-links a {
-    color: var(--muted-dark);
+.nav-link {
+    min-height: 46px;
+
+    padding: 10px 15px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: rgba(255, 255, 255, 0.78);
 
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 650;
 
-    padding: 9px 13px;
-
-    border-radius: 13px;
+    white-space: nowrap;
 
     transition:
-        background 0.2s,
-        color 0.2s,
-        transform 0.2s;
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-.nav-links a:hover {
-    color: var(--purple);
+/* ICON */
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255, 255, 255, 0.62);
+
+    font-size: 14px;
+    line-height: 1;
+}
+
+
+/* HOVER */
+
+.nav-link:hover {
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    border-color: rgba(255, 255, 255, 0.20);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 20px rgba(0, 0, 0, 0.18);
+}
+
+.nav-link:hover .nav-icon {
+    color: #ffffff;
+}
+
+
+/* ACTIVE PAGE */
+
+.nav-link.active {
+    color: #ffffff;
 
     background:
-        #f3eaff;
+        linear-gradient(
+            135deg,
+            rgba(155, 92, 255, 0.25),
+            rgba(255, 63, 164, 0.20)
+        );
 
-    transform:
-        translateY(-2px);
+    border-color:
+        rgba(184, 116, 255, 0.45);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 6px 20px rgba(128, 61, 210, 0.16);
+}
+
+.nav-link.active .nav-icon {
+    color: #d8baff;
+}
+
+
+/* LOGOUT */
+
+.nav-link-logout {
+    color: #ffb8c9;
+
+    border-color:
+        rgba(255, 108, 145, 0.16);
+
+    background:
+        rgba(255, 82, 125, 0.055);
+}
+
+.nav-link-logout:hover {
+    color: #ffffff;
+
+    background:
+        rgba(255, 82, 125, 0.14);
+
+    border-color:
+        rgba(255, 108, 145, 0.32);
+}
+
+
+/* LOGIN / REGISTER */
+
+.nav-link-primary {
+    color: #ffffff;
+
+    border-color: transparent;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9b5cff,
+            #e83fa5
+        );
+
+    box-shadow:
+        0 7px 22px rgba(174, 76, 255, 0.25);
+}
+
+.nav-link-primary:hover {
+    color: #ffffff;
+
+    border-color: transparent;
+
+    background:
+        linear-gradient(
+            135deg,
+            #a96cff,
+            #f34fb1
+        );
+
+    box-shadow:
+        0 10px 28px rgba(174, 76, 255, 0.34);
+}
+
+
+/* KEYBOARD ACCESSIBILITY */
+
+.nav-link:focus-visible,
+.navbar-brand:focus-visible {
+    outline: 3px solid rgba(190, 145, 255, 0.75);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.page-content {
+    min-height: calc(100vh - 82px);
 }
 
 

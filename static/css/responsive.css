@@ -1,4 +1,22 @@
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (max-width: 1000px) {
+
+    .navbar-inner {
+        min-height: 76px;
+    }
+
+    .nav-links {
+        gap: 7px;
+    }
+
+    .nav-link {
+        min-height: 44px;
+        padding: 9px 13px;
+    }
+
 
     .hero {
         grid-template-columns: 1fr;
@@ -58,20 +76,69 @@
 }
 
 
+/* =========================================================
+   MOBILE / TABLET
+   ========================================================= */
+
 @media (max-width: 700px) {
 
     .navbar-inner {
+        width: min(100% - 24px, 1400px);
+
         min-height: auto;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        align-items: flex-start;
+
+        padding: 14px 0;
+
+        align-items: center;
+
+        gap: 14px;
     }
 
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 8px 14px;
+
+    .navbar-brand {
+        font-size: 19px;
     }
+
+
+    .brand-mark {
+        width: 35px;
+        height: 35px;
+
+        border-radius: 10px;
+    }
+
+
+    .nav-links {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 7px;
+
+        justify-content: stretch;
+    }
+
+
+    .nav-link {
+        width: 100%;
+
+        min-height: 44px;
+
+        padding: 9px 10px;
+
+        font-size: 13px;
+    }
+
+
+    .nav-icon {
+        width: 18px;
+        height: 18px;
+
+        font-size: 13px;
+    }
+
 
     .page-container,
     .studio-page,
@@ -147,16 +214,50 @@
 }
 
 
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
 @media (max-width: 480px) {
 
     .navbar-inner {
+        width: calc(100% - 20px);
+
         flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 12px 0;
     }
+
+
+    .navbar-brand {
+        justify-content: center;
+    }
+
 
     .nav-links {
         width: 100%;
-        justify-content: flex-start;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 7px;
     }
+
+
+    .nav-link {
+        min-height: 46px;
+
+        padding: 10px 8px;
+
+        font-size: 12px;
+    }
+
+
+    .nav-icon {
+        display: none;
+    }
+
 
     .hero-buttons {
         flex-direction: column;
@@ -173,5 +274,4 @@
     .room-info {
         width: 100%;
     }
-
 }
